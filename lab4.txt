@@ -1,1 +1,16 @@
-Answer written questions here:
+1.
+Answer: Every pixel has to finish its mandelbrotSmooth call before the next frame can be drawn, so a high iteration count 
+while you're panning or zooming would make the app feel frozen. Starting at 50 means you get a rough but immediate picture
+as you move, and the detail fills in by doubling once you stop, which feels much smoother than staring at a stuck window.
+
+2.
+Answer: Since no pixel depends on any other, one main thread can split the image into chunks, such as horizontal strips or
+tiles, hand them to worker threads, and wait for them all to finish before stitching the result together. Small tiles
+work better than one big strip per worker, because the black regions near the set take far longer to compute than the fast-escaping
+outside, and with small tiles an idle worker can just grab the next one instead of waiting on a slow neighbour.
+
+3.
+Answer:Visually, averaging the colours of four sub-pixel samples would smooth out the jagged edges and turn the speckled noise 
+into a softer, more accurate blend of what's actually inside that pixel, so the image looks cleaner and less grainy. The catch 
+is that it costs about four times as much work per frame, which hurts most at high iteration counts, so you'd probably only use 
+it once the view has settled and you have time to spare.
